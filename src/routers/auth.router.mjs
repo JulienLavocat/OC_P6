@@ -1,4 +1,4 @@
-import * as ctrl from "../controllers/auth/auth.controller.mjs";
+import * as ctrl from "../controllers/auth.controller.mjs";
 import * as express from "express";
 import { validate } from "express-validation";
 import { loginValidation } from "../validations/login.validation.mjs";

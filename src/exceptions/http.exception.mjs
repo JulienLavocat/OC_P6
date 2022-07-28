@@ -14,4 +14,16 @@ export class HTTPException extends Error {
 		super(message);
 		this.status = status;
 	}
+
+	/**
+	 *
+	 * @param {express.Response} res
+	 */
+	serialize(res) {
+		res.status(this.status).send(
+			typeof this.message === "string"
+				? { message: this.message }
+				: this.message,
+		);
+	}
 }

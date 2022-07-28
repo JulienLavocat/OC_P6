@@ -1,10 +1,14 @@
 import express from "express"; // eslint-disable-line no-unused-vars
-import { HashService } from "../../services/hash.service.mjs";
-import { Password } from "../../schemas/password.schema.mjs";
-import { User } from "../../schemas/user.schema.mjs";
+import { HashService } from "../services/hash.service.mjs";
+import { Password } from "../schemas/password.schema.mjs";
+import { User } from "../schemas/user.schema.mjs";
 import mongoose from "mongoose";
-import UnauthorizedException from "../../exceptions/UnauthorizedException.mjs";
-import { TokensService } from "../../services/tokens.service.mjs";
+import UnauthorizedException from "../exceptions/UnauthorizedException.mjs";
+import { TokensService } from "../services/tokens.service.mjs";
+
+const invalidEmailOrPassword = new UnauthorizedException(
+	"Invalid email or password",
+);
 
 /**
  * Register a new user using the provider DTO
@@ -14,18 +18,14 @@ import { TokensService } from "../../services/tokens.service.mjs";
 export const register = async (req, res) => {
 	req.body.password = await HashService.hash(req.body.password);
 
-	const id = new mongoose.Types.ObjectId();
-	const password = new Password({
-		_id: id,
-		password: req.body.password,
-	}).save();
-
-	const user = new User({
-		_id: id,
+	const user = await new User({
 		email: req.body.email,
 	}).save();
 
-	await Promise.all([user, password]);
+	await new Password({
+		_id: user._id,
+		password: req.body.password,
+	}).save();
 
 	res.send({ success: true });
 };
@@ -46,12 +46,14 @@ export const login = async (req, res) => {
 		{ _id: true }, // Projection to return only the document's id
 	);
 
+	if (!user) throw invalidEmailOrPassword;
+
 	const passwordDoc = await Password.findById(user._id);
 	if (
 		!passwordDoc ||
 		!(await HashService.compare(passwordDoc.password, password))
 	) {
-		throw new UnauthorizedException("Invalid email or password");
+		throw invalidEmailOrPassword;
 	}
 
 	res.send({ userId: user._id, token: TokensService.sign(user) });
