@@ -42,3 +42,16 @@ export const listSauces = async (req, res) => {
 export const getSauce = async (req, res) => {
 	res.send(await Sauce.findById(req.params.id));
 };
+
+/**
+ * Get a sauce
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const deleteSauce = async (req, res) => {
+	await Sauce.findOneAndRemove({
+		_id: req.params.id,
+	});
+
+	res.send({ message: "deleted" });
+};
