@@ -16,6 +16,8 @@ import { HTTPException } from "./exceptions/http.exception.mjs";
 
 	const app = express();
 
+	app.use("/api/images", express.static("images"));
+
 	// Helmet is a middleware that helps with security and should be used first
 	app.use(helmet());
 
