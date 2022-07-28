@@ -33,3 +33,12 @@ export const addSauce = async (req, res) => {
 export const listSauces = async (req, res) => {
 	res.send(await Sauce.find());
 };
+
+/**
+ * Get a sauce
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const getSauce = async (req, res) => {
+	res.send(await Sauce.findById(req.params.id));
+};

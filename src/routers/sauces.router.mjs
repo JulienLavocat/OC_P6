@@ -7,5 +7,6 @@ const router = express.Router();
 
 router.post("/", upload.single("image"), ctrl.addSauce);
 router.get("/", ctrl.listSauces);
+router.get("/:id", ctrl.getSauce);
 
 export default router;
