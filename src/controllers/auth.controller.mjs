@@ -3,7 +3,7 @@ import { HashService } from "../services/hash.service.mjs";
 import { Password } from "../schemas/password.schema.mjs";
 import { User } from "../schemas/user.schema.mjs";
 import mongoose from "mongoose";
-import UnauthorizedException from "../exceptions/UnauthorizedException.mjs";
+import UnauthorizedException from "../exceptions/unauthorized.exception.mjs";
 import { TokensService } from "../services/tokens.service.mjs";
 
 const invalidEmailOrPassword = new UnauthorizedException(

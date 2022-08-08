@@ -1,7 +1,7 @@
 import { Sauce } from "../schemas/sauce.schema.mjs";
 import express from "express";
 import multer from "multer";
-import { BadRequestException } from "../exceptions/BadRequestException.mjs";
+import BadRequestException from "../exceptions/bad-request.exception.mjs";
 import * as fs from "fs";
 
 /**
@@ -60,8 +60,14 @@ export const updateSauce = async (req, res) => {
 	const oldSauce = await Sauce.findByIdAndUpdate(req.params.id, sauceData);
 
 	// Remove old image from file system
-	const imageUrlSplit = oldSauce.imageUrl.split("/");
-	fs.unlink("./images/" + imageUrlSplit[imageUrlSplit.length - 1], () => {});
+	if (req.file) {
+		const imageUrlSplit = oldSauce.imageUrl.split("/");
+		console.log(imageUrlSplit[imageUrlSplit.length - 1]);
+		fs.unlink(
+			"./images/" + imageUrlSplit[imageUrlSplit.length - 1],
+			() => {},
+		);
+	}
 
 	res.send(oldSauce);
 };
