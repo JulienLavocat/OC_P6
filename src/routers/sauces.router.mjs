@@ -11,6 +11,7 @@ const router = express.Router();
 router.post("/", upload.single("image"), ctrl.addSauce);
 router.get("/", ctrl.listSauces);
 router.get("/:id", ctrl.getSauce);
+router.put("/:id", upload.single("image"), ctrl.updateSauce);
 router.delete("/:id", ctrl.deleteSauce);
 router.post("/:id/like", validate(likeSauceValidation), ctrl.likeSauce);
 

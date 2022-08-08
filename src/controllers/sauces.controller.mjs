@@ -2,6 +2,7 @@ import { Sauce } from "../schemas/sauce.schema.mjs";
 import express from "express";
 import multer from "multer";
 import { BadRequestException } from "../exceptions/BadRequestException.mjs";
+import * as fs from "fs";
 
 /**
  * Add a new sauce to the database
@@ -42,6 +43,27 @@ export const listSauces = async (req, res) => {
  */
 export const getSauce = async (req, res) => {
 	res.send(await Sauce.findById(req.params.id));
+};
+
+/**
+ * Update a sauce
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+export const updateSauce = async (req, res) => {
+	const sauceData = req.file ? JSON.parse(req.body.sauce) : req.body;
+
+	if (req.file) {
+		sauceData.imageUrl = `${process.env.API_HOST}/api/images/${req.file.filename}`;
+	}
+
+	const oldSauce = await Sauce.findByIdAndUpdate(req.params.id, sauceData);
+
+	// Remove old image from file system
+	const imageUrlSplit = oldSauce.imageUrl.split("/");
+	fs.unlink("./images/" + imageUrlSplit[imageUrlSplit.length - 1], () => {});
+
+	res.send(oldSauce);
 };
 
 /**
