@@ -3,10 +3,6 @@ version: "3"
 name: "oc-p6-jl"
 
 services:
-    redis:
-        image: redis:alpine
-        ports:
-            - 6379:6379
     mongodb:
         image: mongo:5
         ports:
