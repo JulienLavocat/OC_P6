@@ -1,9 +1,9 @@
 import express from "express"; // eslint-disable-line no-unused-vars
-import { HashService } from "../services/hash.service.mjs";
+import BadRequestException from "../exceptions/bad-request.exception.mjs";
+import UnauthorizedException from "../exceptions/unauthorized.exception.mjs";
 import { Password } from "../schemas/password.schema.mjs";
 import { User } from "../schemas/user.schema.mjs";
-import mongoose from "mongoose";
-import UnauthorizedException from "../exceptions/unauthorized.exception.mjs";
+import { HashService } from "../services/hash.service.mjs";
 import { TokensService } from "../services/tokens.service.mjs";
 
 const invalidEmailOrPassword = new UnauthorizedException(
@@ -18,9 +18,14 @@ const invalidEmailOrPassword = new UnauthorizedException(
 export const register = async (req, res) => {
 	req.body.password = await HashService.hash(req.body.password);
 
-	const user = await new User({
-		email: req.body.email,
-	}).save();
+	try {
+		const user = await new User({
+			email: req.body.email,
+		}).save();
+	} catch (error) {
+		if (error.code === 11000)
+			throw new BadRequestException("Email address already in use");
+	}
 
 	await new Password({
 		_id: user._id,
