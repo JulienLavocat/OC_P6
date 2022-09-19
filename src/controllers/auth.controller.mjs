@@ -22,17 +22,17 @@ export const register = async (req, res) => {
 		const user = await new User({
 			email: req.body.email,
 		}).save();
+
+		await new Password({
+			_id: user._id,
+			password: req.body.password,
+		}).save();
+
+		res.send({ success: true });
 	} catch (error) {
 		if (error.code === 11000)
 			throw new BadRequestException("Email address already in use");
 	}
-
-	await new Password({
-		_id: user._id,
-		password: req.body.password,
-	}).save();
-
-	res.send({ success: true });
 };
 
 /**

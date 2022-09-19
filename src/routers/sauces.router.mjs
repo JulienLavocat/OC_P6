@@ -17,11 +17,6 @@ router.get("/", ctrl.listSauces);
 router.get("/:id", ctrl.getSauce);
 router.put("/:id", isSauceOwner, upload.single("image"), ctrl.updateSauce);
 router.delete("/:id", isSauceOwner, ctrl.deleteSauce);
-router.post(
-	"/:id/like",
-	isSauceOwner,
-	validate(likeSauceValidation),
-	ctrl.likeSauce,
-);
+router.post("/:id/like", validate(likeSauceValidation), ctrl.likeSauce);
 
 export default router;
